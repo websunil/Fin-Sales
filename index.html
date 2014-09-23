@@ -372,8 +372,7 @@ $("#btnStartScan").click(function() {
 			
 			 transaction.executeSql('SELECT * FROM barcodetab where Barcode = ? ', [result.text],
 			 function(transaction, result1) {
-			 	alert("hi");
-			 	alert(result1.rows.length);
+			 
 			  if (result1.rows.length > 0) {
 					var row = result1.rows.item(0);
 					alert("We got a barcode\n" +
