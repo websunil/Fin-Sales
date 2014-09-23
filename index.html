@@ -383,20 +383,15 @@ $("#btnStartScan").click(function() {
 					
 					if (confirm1 == true) {
 
-						db.transaction(function(transaction) {
-							transaction.executeSql('SELECT * FROM barcodetab where Stylecode = ? ', [$('#txStylecode').val()],
-							function(transaction, result2) {
-							if (result2.rows.length > 0) {
-								transaction.executeSql('INSERT INTO Stocks(Stylecode, Qty) VALUES (?,?)',[$('#txStylecode').val(), 1],
-								nullHandler,errorHandler);
-							}
-							else{
-							confirm("Entered style code doesnot Exists");
-							}
-							},errorHandler);
-
-
-						});
+					
+					if (result2.rows.length > 0) {
+						transaction.executeSql('INSERT INTO Stocks(Stylecode, Qty) VALUES (?,?)',[row.Stylecode, 1],
+						nullHandler,errorHandler);
+					}
+					else{
+					confirm("Entered style code doesnot Exists");
+					}
+						
 
 
 
