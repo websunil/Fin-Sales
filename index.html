@@ -360,6 +360,7 @@ $("#btnStartScan").click(function() {
 	   
 	cordova.plugins.barcodeScanner.scan(
 	  function (result) {
+	 alert(result.text);
 		db.transaction(function(transaction) {
 			 transaction.executeSql('SELECT * FROM barcodetab where Barcode = ? ', [result.text],
 			 function(transaction, result1) {
@@ -422,8 +423,6 @@ function delete_data() {
 	//alert("dsf");
 
 		db.transaction(function(transaction) {
-		
-					
 				
 			var decode = document.getElementById('delardetails').value;
 			var uid = window.localStorage["id"];
@@ -479,7 +478,7 @@ function delete_data() {
     }
 	
 function errorCB(err) {
- console.log("Error processing SQL: "+err.code);
+	console.log("Error processing SQL: "+err.code);
 }
     </script>
     <div>
