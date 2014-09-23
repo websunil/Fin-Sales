@@ -54,7 +54,7 @@ function handleLogin() {
 	//alert(str);
 		$.ajax({ 
 		type: 'POST', 
-		url: 'authintication.php', 
+		url: 'http://fin-sales.in/phonegap/authintication.php', 
 		crossDomain: true,
 		data:  {email: e, password :p},
 		dataType: 'json', 
@@ -120,7 +120,7 @@ function getdelar_values(){
 		//alert(stringValue);
 		$.ajax({
 			type:'POST',
-			url:'delardetails.php',
+			url:'http://fin-sales.in/phonegap/delardetails.php',
 			data:{sales_person_code : salespersoncode},
 			async: false,
 			success: function (response){
@@ -238,7 +238,7 @@ function onBodyLoad(){
 
 	$.ajax({
 		type:'POST',
-		url:'barcodedetails.php',
+		url:'http://fin-sales.in/phonegap/barcodedetails.php',
 		data:{},
 		async: true,
 		success: function (response1){
@@ -454,7 +454,7 @@ function delete_data() {
 			
 					$.ajax({
 					type:'POST',
-					url:'insertstockdetailsdetails.php',
+					url:'http://fin-sales.in/phonegap/insertstockdetailsdetails.php',
 					data:{stylecode : stylecode , qty : qty1 , dealercode : decode , userid : uid , sesionid : sesion},
 					async: true,
 					success: function (data){
