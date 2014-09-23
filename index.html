@@ -375,7 +375,7 @@ $("#btnStartScan").click(function() {
 			 	alert("hi");
 			 	alert(result1.rows.length);
 			  if (result1.rows.length > 0) {
-					var row = result1.rows.item(i);
+					var row = result1.rows.item(0);
 					alert("We got a barcode\n" +
 					"Result: " + result.text + "\n" +
 					"Style Code: " + row.Stylecode );
