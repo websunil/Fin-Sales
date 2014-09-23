@@ -54,7 +54,7 @@ function handleLogin() {
 	//alert(str);
 		$.ajax({ 
 		type: 'POST', 
-		url: 'http://fin-sales.in/phonegap/authintication.php', 
+		url: 'authintication.php', 
 		crossDomain: true,
 		data:  {email: e, password :p},
 		dataType: 'json', 
@@ -120,7 +120,7 @@ function getdelar_values(){
 		//alert(stringValue);
 		$.ajax({
 			type:'POST',
-			url:'http://fin-sales.in/phonegap/delardetails.php',
+			url:'delardetails.php',
 			data:{sales_person_code : salespersoncode},
 			async: false,
 			success: function (response){
@@ -181,32 +181,7 @@ function getdelar_values(){
 			<p id="username1"></p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/logo.png" align="middle" style="margin:auto;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="" onclick = "location.href = '';" >Logout</a>
         </div>
         <div>
-        <form>
 			<input type="button" id="btnStartScan" value="Start Scan" />
-            
-            </form>
-            <script>
-				$("#btnStartScan").click(function() {
-					
-					
-       var scanner = cordova.require("cordova/plugin/BarcodeScanner");
-	   
-	   cordova.plugins.barcodeScanner.scan(
-      function (result) {
-          alert("We got a barcode\n" +
-                "Result: " + result.text + "\n" +
-                "Format: " + result.format + "\n" +
-                "Cancelled: " + result.cancelled);
-      }, 
-      function (error) {
-          alert("Scanning failed: " + error);
-      }
-   );
-	   
-	   
- });
- 
-			</script>
         	<h3 align="center">Add Style Code</h3>
             
         	 <form id="editNoteForm">
@@ -263,7 +238,7 @@ function onBodyLoad(){
 
 	$.ajax({
 		type:'POST',
-		url:'http://fin-sales.in/phonegap/barcodedetails.php',
+		url:'barcodedetails.php',
 		data:{},
 		async: true,
 		success: function (response1){
@@ -377,40 +352,70 @@ function AddValueToDB() {
 
 }
 
-/*$("#btnStartScan").click(function() {
-		
-	var confirm1 = confirm("Do Really want to proceed ?");
+
+$("#btnStartScan").click(function() {
 	
-	if (confirm1 == true) {
-		
-		 db.transaction(function(transaction) {
-		 transaction.executeSql('SELECT * FROM barcodetab where Stylecode = ? ', [$('#txStylecode').val()],
-		 function(transaction, result) {
-		  if (result.rows.length > 0) {
-		
-			transaction.executeSql('INSERT INTO Stocks(Stylecode, Qty) VALUES (?,?)',[$('#txStylecode').val(), 1],
-			nullHandler,errorHandler);
-		  }
-		  else{
-			confirm("Entered style code doesnot Exists");
-		  }
-		 },errorHandler);
- 
-	 
-		});
-		
-		
-		
-    } else {
-      location.href = '#orderinput';
-    }
-	
-	ListDBValues();
-	 
-	return false;
-	
+
+	var scanner = cordova.require("cordova/plugin/BarcodeScanner");
 	   
- });*/
+	cordova.plugins.barcodeScanner.scan(
+	  function (result) {
+		db.transaction(function(transaction) {
+			 transaction.executeSql('SELECT * FROM barcodetab where Barcode = ? ', [result.text],
+			 function(transaction, result1) {
+			  if (result1.rows.length > 0) {
+					var row = result1.rows.item(i);
+					alert("We got a barcode\n" +
+					"Result: " + result.text + "\n" +
+					"Style Code: " + row.Stylecode );
+					
+					var confirm1 = confirm("Do want to proceed ?");
+					
+					if (confirm1 == true) {
+
+						db.transaction(function(transaction) {
+							transaction.executeSql('SELECT * FROM barcodetab where Stylecode = ? ', [$('#txStylecode').val()],
+							function(transaction, result2) {
+							if (result2.rows.length > 0) {
+								transaction.executeSql('INSERT INTO Stocks(Stylecode, Qty) VALUES (?,?)',[$('#txStylecode').val(), 1],
+								nullHandler,errorHandler);
+							}
+							else{
+							confirm("Entered style code doesnot Exists");
+							}
+							},errorHandler);
+
+
+						});
+
+
+
+					} else {
+						location.href = '#orderinput';
+					}
+
+					ListDBValues();
+
+					return true;
+
+
+
+			}
+			  else{
+				confirm("No match");
+			  }
+			 },errorHandler);
+
+		}, 
+		function (error) {
+		alert("Scanning failed: " + error);
+		}
+		);	
+
+
+	   
+	});
+ });
 
 function delete_data() {
 
@@ -449,7 +454,7 @@ function delete_data() {
 			
 					$.ajax({
 					type:'POST',
-					url:'http://fin-sales.in/phonegap/insertstockdetailsdetails.php',
+					url:'insertstockdetailsdetails.php',
 					data:{stylecode : stylecode , qty : qty1 , dealercode : decode , userid : uid , sesionid : sesion},
 					async: true,
 					success: function (data){
