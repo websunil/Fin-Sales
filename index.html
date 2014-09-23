@@ -226,6 +226,11 @@ function onBodyLoad(){
 	}
 
 	db = openDatabase(shortName, version, displayName,maxSize);
+	
+	//db.transaction(function (tx){
+		//tx.executeSql("DELETE FROM 'barcodetab'");}, 
+	//errorCB);
+	
 	db.transaction(function(tx){
 		
 		tx.executeSql( 'CREATE TABLE IF NOT EXISTS Stocks(UserId INTEGER NOT NULL PRIMARY KEY, Stylecode TEXT NOT NULL, Qty TEXT NOT NULL)',
@@ -300,6 +305,7 @@ function ListDBValues() {
      },errorHandler);
  },errorHandler,nullHandler);
  
+
  return;
  
 }
@@ -360,7 +366,7 @@ $("#btnStartScan").click(function() {
 	   
 	cordova.plugins.barcodeScanner.scan(
 	  function (result) {
-	 alert(result.text);
+	
 		db.transaction(function(transaction) {
 			 transaction.executeSql('SELECT * FROM barcodetab where Barcode = ? ', [result.text],
 			 function(transaction, result1) {
@@ -467,9 +473,10 @@ function delete_data() {
 		 },errorHandler);
 		 
 
-     db.transaction(function (tx){
-                tx.executeSql("DELETE FROM 'Stocks'");}, 
-                    errorCB);
+	db.transaction(function (tx){
+			tx.executeSql("DELETE FROM 'Stocks'");}, 
+				errorCB);
+	
 					
 	$('#lbStocks').html('');				
 	$('#Stylecode').val() = '';				
