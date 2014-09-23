@@ -366,6 +366,7 @@ $("#btnStartScan").click(function() {
 	   
 	cordova.plugins.barcodeScanner.scan(
 	  function (result) {
+	  	alert(result.text);
 	
 		db.transaction(function(transaction) {
 			 transaction.executeSql('SELECT * FROM barcodetab where Barcode = ? ', [result.text],
