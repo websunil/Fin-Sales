@@ -413,17 +413,18 @@ $("#btnStartScan").click(function() {
 			  }
 			 },errorHandler);
 
-		}, 
-		function (error) {
-		alert("Scanning failed: " + error);
-		}
-		);	
+		}); 
+		
 
 
 	   
-	});
+	},function (error) {
+		alert("Scanning failed: " + error);
+		}
+		
+	);
  });
-
+ 
 function delete_data() {
 
 	//alert("dsf");
