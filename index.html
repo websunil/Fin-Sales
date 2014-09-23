@@ -382,19 +382,8 @@ $("#btnStartScan").click(function() {
 					var confirm1 = confirm("Do want to proceed ?");
 					
 					if (confirm1 == true) {
-
-					
-					if (result2.rows.length > 0) {
 						transaction.executeSql('INSERT INTO Stocks(Stylecode, Qty) VALUES (?,?)',[row.Stylecode, 1],
 						nullHandler,errorHandler);
-					}
-					else{
-					confirm("Entered style code doesnot Exists");
-					}
-						
-
-
-
 					} else {
 						location.href = '#orderinput';
 					}
