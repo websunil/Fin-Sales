@@ -1,0 +1,499 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Welcome to Fossil Phone Sales</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+<link rel="stylesheet" href="css/fossilmobmin.css" />
+<link rel="stylesheet" href="css/jquerymobileiconsmin.css" />
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile.structure-1.4.3.min.css" />
+<script type="text/javascript" src="barcodescanner.js"></script>
+        <script type="text/javascript" src="childbrowser.js"></script>
+
+</head>
+<body onload="onBodyLoad()">
+
+	<div data-role="page" id="logindetail">
+    	<div style="width:120px; margin:auto; margin-top:10px;" data-role="header">
+			<img src="images/logo.png" align="middle" style="margin:auto;" />
+    	</div>
+        <div data-role="content">
+        	<form id="loginForm" method="post">
+            	<label>Username
+            		<input type="text" name="email" id="email"  /><br />
+                </label>
+                <label>Password
+	                <input type="password" name="password" id="password"  />
+                </label>
+               
+                <label>
+                	<input type="button" id="login" value="Login" onclick="handleLogin();" />
+                </label>
+            </form>
+		</div>
+    	<div data-role="footer">
+        	
+        </div>
+<input type="hidden" id="userid" value="" />
+		
+    </div>
+<script>
+function handleLogin() {
+	var form = $("#loginForm");    
+	//disable the button so we can't resubmit while we wait
+	//$("#submitButton",form).attr("disabled","disabled");
+	var e = $("#email", form).val();
+	var p = $("#password", form).val();
+	
+	//console.log("click");
+	if(e != "" && p != "") {
+	//var str = form.serialize();
+	//alert(str);
+		$.ajax({ 
+		type: 'POST', 
+		url: 'http://fin-sales.in/phonegap/authintication.php', 
+		crossDomain: true,
+		data:  {email: e, password :p},
+		dataType: 'json', 
+		async: false,
+		success: function (response){
+			
+			response = response.split('||');
+			
+			window.localStorage["id"] = response[2];
+			window.localStorage["username"] = response[3];
+			
+			if (response[0]==true) { 	
+			
+				window.localStorage["email"] = e;
+				window.localStorage["password"] = p;  
+				//document.getElementById('logindetail').style.display = "none";	
+				//document.getElementById('select_dealer').style.display = "block";
+				
+				location.href = '#select_dealer';
+				
+				document.getElementById('login').onClick = ListDBValues();
+				
+				document.getElementById('username').innerHTML = window.localStorage["username"];
+				document.getElementById('username1').innerHTML = window.localStorage["username"];
+				
+				
+				response[1] = response[1].replace('"', '');
+				response[1] = response[1].replace('"', '');
+				var res = response[1].split(",");
+				
+				for(var i=0;i<res.length;i++){
+					$("#sales_person").append("<option value='"+res[i]+"'>"+res[i]+"</option>");
+				}
+			
+				
+				//window.location.replace('display.html');
+				
+			
+			} 
+			else
+			{		
+				 alert("Your login failed");
+				
+			}
+		},
+		error: function(error)
+		{		
+			alert('Could not connect to the database' + error);
+		}
+	}); 
+	}
+	else {
+	//if the email and password is empty
+	alert("You must enter email and password");
+	
+	}
+	return false;
+}
+
+function getdelar_values(){
+		var salespersoncode = document.getElementById('sales_person').value;
+		
+		//alert(stringValue);
+		$.ajax({
+			type:'POST',
+			url:'http://fin-sales.in/phonegap/delardetails.php',
+			data:{sales_person_code : salespersoncode},
+			async: false,
+			success: function (response){
+					
+				response = response.replace('"', '');
+				response = response.replace('"', '');
+				var res = response.split(",");
+				
+				document.getElementById("delardetails").innerHTML = "<option value='0'>Select delars</option>";
+				
+				for(var i=0;i<res.length;i++){
+					$("#delardetails").append("<option value='"+res[i]+"'>"+res[i]+"</option>");
+				}
+			}
+		}); 
+	}
+	
+	
+</script>
+    
+    <!-- End of Login -->
+    <!-- Start of the page Select sales person and Dealer -->
+    <div data-role="page" id="select_dealer">
+    	<div style="width:320px; margin:auto; margin-top:10px;" data-role=""><p id="username"></p><img src="images/logo.png" align="middle" style="margin:auto;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="" onclick = "location.href = '';">Logout</a> </div>
+  <div data-role="content">
+    <form action="" method="post">
+      <label style="margin-bottom:30px;">
+        <select id="sales_person" onchange="getdelar_values();" >
+
+			<option value="">Select Sales Person</option>
+                                   
+		</select>
+        
+      </label>
+      <label style="margin-bottom:30px;">
+        <select id="delardetails">
+          <option>Select Dealer</option> 
+        </select>
+      </label>
+      <label>
+        <input type="button" value="Submit" onclick="location.href = '#orderinput';" />
+      </label>
+    </form>
+  </div>
+  
+</div>
+    
+    <div data-role="footer">
+    
+    </div>
+    </div>
+    <!-- End of the page Select salesperson code and select dealer -->
+
+    <div data-role="page" id="orderinput">
+    	<div data-role="content">
+        <div style="margin:auto;">
+    	<div style="width:320px; margin:auto; margin-top:10px;">
+			<p id="username1"></p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/logo.png" align="middle" style="margin:auto;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="" onclick = "location.href = '';" >Logout</a>
+        </div>
+        <div>
+        <form>
+			<input type="button" id="btnStartScan" value="Start Scan" />
+            
+            </form>
+            <script>
+				$("#btnStartScan").click(function() {
+					
+					
+       var scanner = cordova.require("cordova/plugin/BarcodeScanner");
+	   
+	   cordova.plugins.barcodeScanner.scan(
+      function (result) {
+          alert("We got a barcode\n" +
+                "Result: " + result.text + "\n" +
+                "Format: " + result.format + "\n" +
+                "Cancelled: " + result.cancelled);
+      }, 
+      function (error) {
+          alert("Scanning failed: " + error);
+      }
+   );
+	   
+	   
+ });
+ 
+			</script>
+        	<h3 align="center">Add Style Code</h3>
+            
+        	 <form id="editNoteForm">
+             	<label>Type Style Code
+                	<input type="text" name="Stylecode" id="txStylecode" />
+                </label>
+               <!-- <label>Qty
+                	<input type="text" name="Qty" id="txQty" />
+                </label>-->
+                <label>
+                	<input type="button" value="Add More" onClick="AddValueToDB()" />
+                </label>
+                <label>
+                	<input type="button" value="Generate Suggested Order" onclick="delete_data();" />
+                </label>
+             </form>
+        </div>
+    <script type="text/javascript" charset="utf-8">
+	 var db ;
+function initDB(){
+   db = window.openDatabase("WebSqlDB", "1.0", "WebSqlDB", 100000);
+}
+	 
+   var db; var shortName = 'WebSqlDB'; var version = '1.0'; var displayName = 'WebSqlDB'; var maxSize = 1000000;
+   
+function errorHandler(transaction, error) {
+   alert('Error: ' + error.message + ' code: ' + error.code);
+ 
+}
+ 
+ function successCallBack() {
+    //alert("success!");
+}
+ 
+function nullHandler(){};
+
+function onBodyLoad(){
+
+	if (!window.openDatabase) {
+		alert('Databases are not supported in this browser.');
+		return;
+	}
+
+	db = openDatabase(shortName, version, displayName,maxSize);
+	db.transaction(function(tx){
+		
+		tx.executeSql( 'CREATE TABLE IF NOT EXISTS Stocks(UserId INTEGER NOT NULL PRIMARY KEY, Stylecode TEXT NOT NULL, Qty TEXT NOT NULL)',
+		[],nullHandler,errorHandler);
+		
+		tx.executeSql( 'CREATE TABLE IF NOT EXISTS barcodetab(BId INTEGER NOT NULL PRIMARY KEY, Stylecode TEXT NOT NULL, Barcode TEXT NOT NULL)',
+		[],nullHandler,errorHandler);
+		
+	},errorHandler,successCallBack);
+
+	$.ajax({
+		type:'POST',
+		url:'http://fin-sales.in/phonegap/barcodedetails.php',
+		data:{},
+		async: true,
+		success: function (response1){
+			//alert(response1);
+			response1 = response1.replace('"', '');
+			response1 = response1.replace('"', '');
+			
+			var res = response1.split("||");
+			
+			var stockdetails ='';
+			var stylecode ='';
+			var quantity ='';
+			
+				
+				db.transaction(function(transaction) {
+					
+					for(var i=0;i<res.length;i++){
+						stockdetails = res[i].split(",");
+					
+					    transaction.executeSql('INSERT INTO barcodetab(Stylecode, Barcode ) VALUES (?,?)',[stockdetails[0], stockdetails[1]],
+						 nullHandler,errorHandler,successCallBack);
+						
+						
+					}
+					
+				   });
+			
+			
+
+		}
+	}); 
+	
+	
+	
+ 
+}
+
+function ListDBValues() {
+ 
+ if (!window.openDatabase) {
+  alert('Databases are not supported in this browser.');
+  return;
+ }
+ $('#lbUsers').html('');
+ 
+ 
+ db.transaction(function(transaction) {
+ document.getElementById('lbStocks').innerHTML = '';
+   transaction.executeSql('SELECT * FROM Stocks;', [],
+     function(transaction, result) {
+      if (result != null && result.rows != null) {
+        for (var i = 0; i < result.rows.length; i++) {
+          var row = result.rows.item(i);
+		  
+		 
+          $('#lbStocks').append('<li>' +row.Stylecode+ ' ' + '<input type="button" value="X" onclick="delete_entry('+row.UserId+')" /></li>' );
+        }
+      }
+     },errorHandler);
+ },errorHandler,nullHandler);
+ 
+ return;
+ 
+}
+
+//deleting selected entries from style code  table 
+
+function delete_entry(id){
+	
+	 db.transaction(function(transaction) {
+		 transaction.executeSql('DELETE FROM Stocks where UserId = ? ', [id],
+		 function(transaction, result) {
+			alert("Selected data is deleted successfully ");
+		 },errorHandler);
+ 
+	 
+   });
+   
+   ListDBValues();
+	
+	
+}
+
+//deleting selected entries from style code  table 
+
+function AddValueToDB() {
+ 
+ if (!window.openDatabase) {
+   alert('Databases are not supported in this browser.');
+   return;
+ }
+ db.transaction(function(transaction) {
+		 transaction.executeSql('SELECT * FROM barcodetab where Stylecode = ? ', [$('#txStylecode').val()],
+		 function(transaction, result) {
+		  if (result.rows.length > 0) {
+			transaction.executeSql('INSERT INTO Stocks(Stylecode, Qty) VALUES (?,?)',[$('#txStylecode').val(), 1],
+			nullHandler,errorHandler);
+		  }
+		  else{
+			confirm("Entered style code doesnot Exists");
+		  }
+		 },errorHandler);
+ 
+	 
+   });
+   
+   ListDBValues();
+ 
+ return false;
+ 
+
+}
+
+/*$("#btnStartScan").click(function() {
+		
+	var confirm1 = confirm("Do Really want to proceed ?");
+	
+	if (confirm1 == true) {
+		
+		 db.transaction(function(transaction) {
+		 transaction.executeSql('SELECT * FROM barcodetab where Stylecode = ? ', [$('#txStylecode').val()],
+		 function(transaction, result) {
+		  if (result.rows.length > 0) {
+		
+			transaction.executeSql('INSERT INTO Stocks(Stylecode, Qty) VALUES (?,?)',[$('#txStylecode').val(), 1],
+			nullHandler,errorHandler);
+		  }
+		  else{
+			confirm("Entered style code doesnot Exists");
+		  }
+		 },errorHandler);
+ 
+	 
+		});
+		
+		
+		
+    } else {
+      location.href = '#orderinput';
+    }
+	
+	ListDBValues();
+	 
+	return false;
+	
+	   
+ });*/
+
+function delete_data() {
+
+	//alert("dsf");
+
+		db.transaction(function(transaction) {
+		
+					
+				
+			var decode = document.getElementById('delardetails').value;
+			var uid = window.localStorage["id"];
+
+			var chars = "01234567890776595493381";
+			var string_length = 3;
+			var randomstring = '';
+			for (var i=0; i<string_length; i++) {
+				var rnum = Math.floor(Math.random() * chars.length);
+				randomstring += chars.substring(rnum,rnum+1);
+			}
+
+			var sesion = "mob" +'/'+ randomstring;
+			var brandname = 'DKNY';
+			var stylecode = '';
+			var qty1 = '';
+		
+		
+		 transaction.executeSql('SELECT * FROM Stocks', [],
+		 function(transaction, result) {
+		  if (result != null && result.rows != null) {
+			for (var i = 0; i < result.rows.length; i++) {
+			  var row = result.rows.item(i);
+			 
+			  stylecode = row.Stylecode;
+			  
+			  qty1 = row.Qty;
+			
+					$.ajax({
+					type:'POST',
+					url:'http://fin-sales.in/phonegap/insertstockdetailsdetails.php',
+					data:{stylecode : stylecode , qty : qty1 , dealercode : decode , userid : uid , sesionid : sesion},
+					async: true,
+					success: function (data){
+						return true;
+					}
+				});
+			}
+		  }
+		 },errorHandler);
+		 
+		 },errorHandler);
+		 
+
+     db.transaction(function (tx){
+                tx.executeSql("DELETE FROM 'Stocks'");}, 
+                    errorCB);
+					
+	$('#lbStocks').html('');				
+	$('#Stylecode').val() = '';				
+	$('#Qty').val() = '';				
+				
+    }
+	
+function errorCB(err) {
+ console.log("Error processing SQL: "+err.code);
+}
+    </script>
+    <div>
+		<ol id="lbStocks">
+		
+		</ol>
+    </div>
+	
+    <div data-role="footer">
+    </div>
+    </div>
+	</div>
+	</div>
+	
+<style>
+	#lbStocks ol {margin:0px; padding:0px; list-style:none;}
+
+	#lbStocks ol li {margin:0px; padding:0px; list-style:none; display:inline; margin-right:30px;color:red;}
+</style>
+
+</body>
+</html>
