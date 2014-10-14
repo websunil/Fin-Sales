@@ -125,14 +125,18 @@ function getdelar_values(){
 			async: false,
 			success: function (response){
 					
+			        response = response.replace('"', '');
 				response = response.replace('"', '');
-				response = response.replace('"', '');
+				
 				var res = response.split(",");
 				
 				document.getElementById("delardetails").innerHTML = "<option value='0'>Select delars</option>";
 				
 				for(var i=0;i<res.length;i++){
-					$("#delardetails").append("<option value='"+res[i]+"'>"+res[i]+"</option>");
+					
+					var res12 = res[i].split("#");
+					
+					$("#delardetails").append("<option value='"+res12[0]+"'>"+res12[1]+"</option>");
 				}
 			}
 		}); 
@@ -453,7 +457,7 @@ function delete_data() {
 					$.ajax({
 					type:'POST',
 					url:'http://fin-sales.in/phonegap/insertstockdetailsdetails.php',
-					data:{stylecode : stylecode , qty : qty1 , dealercode : decode , userid : uid , sesionid : sesion},
+					data:{stylecode : stylecode , qty : qty1 , dealercode : decode , userid : uid , sesionid : sesion,increment : i},
 					async: true,
 					success: function (data){
 						return true;
