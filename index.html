@@ -41,6 +41,13 @@
 		
     </div>
 <script>
+
+function Clear()
+{    
+  
+   document.getElementById("txStylecode").value= "";
+}
+
 function handleLogin() {
 	var form = $("#loginForm");    
 	//disable the button so we can't resubmit while we wait
@@ -190,7 +197,7 @@ function getdelar_values(){
             
         	 <form id="editNoteForm">
              	<label>Type Style Code
-                	<input type="text" name="Stylecode" id="txStylecode" />
+                	<input type="text" name="Stylecode" id="txStylecode" onClick="Clear();"/>
                 </label>
                <!-- <label>Qty
                 	<input type="text" name="Qty" id="txQty" />
