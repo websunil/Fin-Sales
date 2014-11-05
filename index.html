@@ -149,6 +149,24 @@ function getdelar_values(){
 		}); 
 	}
 	
+
+function selectdealarname(val)
+	{
+		
+		$.ajax({
+			type:'POST',
+			url:'http://fin-sales.in/phonegap/delarname.php',
+			data:{dealer_code : val},
+			async: false,
+			success: function (response){
+				 response = response.replace('"', '');
+				response = response.replace('"', '');
+				 document.getElementById('dealername').innerHTML = response;
+			}
+		}); 
+		
+		
+	}
 	
 </script>
     
@@ -167,7 +185,7 @@ function getdelar_values(){
         
       </label>
       <label style="margin-bottom:30px;">
-        <select id="delardetails">
+        <select id="delardetails" onchange="selectdealarname(this.value);">
           <option>Select Dealer</option> 
         </select>
       </label>
@@ -189,7 +207,7 @@ function getdelar_values(){
     	<div data-role="content">
         <div style="margin:auto;">
     	<div style="width:320px; margin:auto; margin-top:10px;">
-			<p id="username1"></p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/logo.png" align="middle" style="margin:auto;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="" onclick = "location.href = '';" >Logout</a>
+			<p id="username1"></p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/logo.png" align="middle" style="margin:auto;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="" onclick = "location.href = '';" >Logout</a><p> Dealer Name - </p><p id="dealername" style="font-weight:bold;color:green;"></p>
         </div>
         <div>
 			<input type="button" id="btnStartScan" value="Start Scan" />
