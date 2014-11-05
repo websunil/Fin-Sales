@@ -365,11 +365,16 @@ function AddValueToDB() {
    alert('Databases are not supported in this browser.');
    return;
  }
+ 
+ var code = $('#txStylecode').val().toUpperCase();
+ 
  db.transaction(function(transaction) {
-		 transaction.executeSql('SELECT * FROM barcodetab where Stylecode = ? ', [$('#txStylecode').val()],
+ 	
+ 	
+		 transaction.executeSql('SELECT * FROM barcodetab where Stylecode = ? ', [code],
 		 function(transaction, result) {
 		  if (result.rows.length > 0) {
-			transaction.executeSql('INSERT INTO Stocks(Stylecode, Qty) VALUES (?,?)',[$('#txStylecode').val(), 1],
+			transaction.executeSql('INSERT INTO Stocks(Stylecode, Qty) VALUES (?,?)',[code, 1],
 			nullHandler,errorHandler);
 		  }
 		  else{
