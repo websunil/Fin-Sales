@@ -67,7 +67,7 @@ function handleLogin() {
 		dataType: 'json', 
 		async: false,
 		success: function (response){
-			alert(response);
+		
 			response = response.split('||');
 			
 			window.localStorage["id"] = response[2];
