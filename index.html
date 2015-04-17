@@ -210,6 +210,9 @@ function selectdealarname(val)
 			<p id="username1"></p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/logo.png" align="middle" style="margin:auto;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="" onclick = "location.href = '';" >Logout</a><p> Dealer Name - </p><p id="dealername" style="font-weight:bold;color:green;"></p>
         </div>
         <div>
+        	<button onClick="updatetables()">Update Data</button>
+        </div>
+        <div>
 			<input type="button" id="btnStartScan" value="Start Scan" />
         	<h3 align="center">Add Style Code</h3>
             
@@ -310,6 +313,74 @@ function onBodyLoad(){
  
 }
 
+
+//update table
+
+	function updatetables(){
+
+	if (!window.openDatabase) {
+		alert('Databases are not supported in this browser.');
+		return;
+	}
+
+	db = openDatabase(shortName, version, displayName,maxSize);
+	
+	//db.transaction(function (tx){
+		//tx.executeSql("DELETE FROM 'barcodetab'");}, 
+	//errorCB);
+	
+	db.transaction(function(tx){
+		
+		tx.executeSql( 'CREATE TABLE IF NOT EXISTS Stocks(UserId INTEGER NOT NULL PRIMARY KEY, Stylecode TEXT NOT NULL, Qty TEXT NOT NULL)',
+		[],nullHandler,errorHandler);
+		
+		tx.executeSql( 'CREATE TABLE IF NOT EXISTS barcodetab(BId INTEGER NOT NULL PRIMARY KEY, Stylecode TEXT NOT NULL, Barcode TEXT NOT NULL)',
+		[],nullHandler,errorHandler);
+		
+	},errorHandler,successCallBack);
+
+	$.ajax({
+		type:'POST',
+		url:'http://fin-sales.in/phonegap/barcodedetails.php',
+		data:{},
+		async: true,
+		success: function (response1){
+			//alert(response1);
+			response1 = response1.replace('"', '');
+			response1 = response1.replace('"', '');
+			
+			var res = response1.split("||");
+			
+			var stockdetails ='';
+			var stylecode ='';
+			var quantity ='';
+			
+				
+				db.transaction(function(transaction) {
+					
+					for(var i=0;i<res.length;i++){
+						stockdetails = res[i].split(",");
+						
+					    transaction.executeSql('INSERT INTO barcodetab(Stylecode, Barcode ) VALUES (?,?)',[stockdetails[0], stockdetails[1]],
+						 nullHandler,errorHandler,successCallBack);
+						
+						
+					}
+					
+				   });
+			
+			
+
+		}
+	}); 
+	
+	
+	
+ 
+}
+
+//update table
+
 function ListDBValues() {
  
  if (!window.openDatabase) {
@@ -407,7 +478,7 @@ $("#btnStartScan").click(function() {
 			
 			 transaction.executeSql('SELECT * FROM barcodetab where Barcode = ? ', [result.text],
 			 function(transaction, result1) {
-			 
+			 alert(result1.rows.length);
 			  if (result1.rows.length > 0) {
 					var row = result1.rows.item(0);
 					alert("We got a barcode\n" +
